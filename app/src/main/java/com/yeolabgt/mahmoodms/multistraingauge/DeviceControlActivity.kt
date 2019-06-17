@@ -54,10 +54,14 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
     private var mGraphInitializedBoolean = false
     private var mGraphAdapterCh1: GraphAdapter? = null
     private var mGraphAdapterCh2: GraphAdapter? = null
+    private var mGraphAdapterCh3: GraphAdapter? = null
+    private var mGraphAdapterCh4: GraphAdapter? = null
     private var mTimeDomainPlotAdapterCh1: XYPlotAdapter? = null
     private var mTimeDomainPlotAdapterCh2: XYPlotAdapter? = null
     private var mCh1: DataChannel? = null
     private var mCh2: DataChannel? = null
+    private var mCh3: DataChannel? = null
+    private var mCh4: DataChannel? = null
     //Device Information
     private var mBleInitializedBoolean = false
     private lateinit var mBluetoothGattArray: Array<BluetoothGatt?>
@@ -205,11 +209,15 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
         mTogglePlots = findViewById(R.id.toggleButtonCh1)
         mTogglePlots!!.setOnCheckedChangeListener { _, b ->
             if (!b) {
-                mGraphAdapterCh2?.clearPlot()
                 mGraphAdapterCh1?.clearPlot()
+                mGraphAdapterCh2?.clearPlot()
+                mGraphAdapterCh3?.clearPlot()
+                mGraphAdapterCh4?.clearPlot()
             }
             mGraphAdapterCh1!!.plotData = b
             mGraphAdapterCh2!!.plotData = b
+            mGraphAdapterCh3!!.plotData = b
+            mGraphAdapterCh4!!.plotData = b
         }
         resetScaleButton.setOnClickListener {
             if (mZAccValue < 0.70) {
@@ -581,9 +589,14 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
 
             mGraphAdapterCh1!!.setxAxisIncrementFromSampleRate(mSampleRate)
             mGraphAdapterCh2!!.setxAxisIncrementFromSampleRate(mSampleRate)
+            mGraphAdapterCh3!!.setxAxisIncrementFromSampleRate(mSampleRate)
+            mGraphAdapterCh4!!.setxAxisIncrementFromSampleRate(mSampleRate)
 
             mGraphAdapterCh1!!.setSeriesHistoryDataPoints(250 * 5)
             mGraphAdapterCh2!!.setSeriesHistoryDataPoints(250 * 5)
+            mGraphAdapterCh3!!.setSeriesHistoryDataPoints(250 * 5)
+            mGraphAdapterCh4!!.setSeriesHistoryDataPoints(250 * 5)
+
             val fileNameTimeStamped = "EOG_2chData_" + timeStamp + "_" + mSampleRate.toString() + "Hz"
             Log.e(TAG, "fileTimeStamp: $fileNameTimeStamped")
             try {
@@ -616,21 +629,29 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
 
     private fun setupGraph() {
         // Initialize our XYPlot reference:
-        mGraphAdapterCh1 = GraphAdapter(mSampleRate * 4, "EMG Data Ch 1", false, Color.BLUE)
-        mGraphAdapterCh2 = GraphAdapter(mSampleRate * 4, "EMG Data Ch 2", false, Color.RED)
+        mGraphAdapterCh1 = GraphAdapter(mSampleRate * 4, "SG Ch 1", false, Color.BLUE)
+        mGraphAdapterCh2 = GraphAdapter(mSampleRate * 4, "SG Ch 2", false, Color.RED)
+        mGraphAdapterCh3 = GraphAdapter(mSampleRate * 4, "SG Ch 3", false, Color.GREEN)
+        mGraphAdapterCh4 = GraphAdapter(mSampleRate * 4, "SG Ch 4", false, Color.LTGRAY)
         //PLOT By default
         mGraphAdapterCh1!!.plotData = true
         mGraphAdapterCh2!!.plotData = true
+        mGraphAdapterCh3!!.plotData = true
+        mGraphAdapterCh4!!.plotData = true
         mGraphAdapterCh1!!.setPointWidth(2.toFloat())
         mGraphAdapterCh2!!.setPointWidth(2.toFloat())
+        mGraphAdapterCh3!!.setPointWidth(2.toFloat())
+        mGraphAdapterCh4!!.setPointWidth(2.toFloat())
 
         mTimeDomainPlotAdapterCh1 = XYPlotAdapter(findViewById(R.id.emgTimeDomainXYPlot), false, 1000)
         if (mTimeDomainPlotAdapterCh1!!.xyPlot != null) {
             mTimeDomainPlotAdapterCh1!!.xyPlot!!.addSeries(mGraphAdapterCh1!!.series, mGraphAdapterCh1!!.lineAndPointFormatter)
+            mTimeDomainPlotAdapterCh1!!.xyPlot!!.addSeries(mGraphAdapterCh2!!.series, mGraphAdapterCh2!!.lineAndPointFormatter)
         }
         mTimeDomainPlotAdapterCh2 = XYPlotAdapter(findViewById(R.id.emgTimeDomainXYPlot2), false, 1000)
         if (mTimeDomainPlotAdapterCh2!!.xyPlot != null) {
-            mTimeDomainPlotAdapterCh2!!.xyPlot!!.addSeries(mGraphAdapterCh2!!.series, mGraphAdapterCh2!!.lineAndPointFormatter)
+            mTimeDomainPlotAdapterCh2!!.xyPlot!!.addSeries(mGraphAdapterCh3!!.series, mGraphAdapterCh3!!.lineAndPointFormatter)
+            mTimeDomainPlotAdapterCh2!!.xyPlot!!.addSeries(mGraphAdapterCh4!!.series, mGraphAdapterCh4!!.lineAndPointFormatter)
         }
         val xyPlotList = listOf(mTimeDomainPlotAdapterCh1!!.xyPlot, mTimeDomainPlotAdapterCh2!!.xyPlot)
         mRedrawer = Redrawer(xyPlotList, 30f, false)
@@ -975,12 +996,6 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 mCh1!!.handleNewData(mNewEEGdataBytes, false)
                 if (mCh1!!.packetCounter.toInt() == mPacketBuffer) {
                     addToGraphBuffer(mCh1!!, mGraphAdapterCh1, true)
-                    //TODO: Update Training Routine
-                    if (mNumberPackets % 22 == 0 && mNumberPackets > 333) {
-                        Log.e(TAG, "Running Classifier:")
-                        val classifyTaskThread = Thread(mClassifyThread)
-                        classifyTaskThread.start()
-                    }
                 }
             }
         }
@@ -996,6 +1011,37 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 mCh2!!.handleNewData(mNewEEGdataBytes, false)
                 if (mCh2!!.packetCounter.toInt() == mPacketBuffer) {
                     addToGraphBuffer(mCh2!!, mGraphAdapterCh2, false)
+                }
+            }
+        }
+
+        //TODO: Add channels 3 and 4:
+        if (AppConstant.CHAR_EEG_CH3_SIGNAL == characteristic.uuid) {
+            if (!mCh3!!.chEnabled) {
+                mCh3!!.chEnabled = true
+            }
+            val newDataBytes = characteristic.value
+            val byteLength = newDataBytes.size
+            getDataRateBytes(byteLength)
+            if (mEEGConnectedAllChannels) {
+                mCh3!!.handleNewData(newDataBytes, false)
+                if (mCh3!!.packetCounter.toInt() == mPacketBuffer) {
+                    addToGraphBuffer(mCh3!!, mGraphAdapterCh3, false)
+                }
+            }
+        }
+
+        if (AppConstant.CHAR_EEG_CH4_SIGNAL == characteristic.uuid) {
+            if (!mCh4!!.chEnabled) {
+                mCh4!!.chEnabled = true
+            }
+            val newDataBytes = characteristic.value
+            val byteLength = newDataBytes.size
+            getDataRateBytes(byteLength)
+            if (mEEGConnectedAllChannels) {
+                mCh4!!.handleNewData(newDataBytes, false)
+                if (mCh4!!.packetCounter.toInt() == mPacketBuffer) {
+                    addToGraphBuffer(mCh4!!, mGraphAdapterCh4, false)
                 }
             }
         }
@@ -1023,15 +1069,32 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
             }
         }
 
-        if (mCh1!!.chEnabled && mCh2!!.chEnabled) {
-            mNumberPackets++
-            mEEGConnectedAllChannels = true
-            mCh1!!.chEnabled = false
-            mCh2!!.chEnabled = false
-            if (mCh1!!.characteristicDataPacketBytes != null &&
-                    mCh2!!.characteristicDataPacketBytes != null) {
-                mPrimarySaveDataFile!!.writeToDisk(mCh1?.characteristicDataPacketBytes,
-                        mCh2?.characteristicDataPacketBytes)
+        if (deviceMacAddresses!!.size == 1) {
+            if (mCh1!!.chEnabled && mCh2!!.chEnabled) {
+                mNumberPackets++
+                mEEGConnectedAllChannels = true
+                mCh1!!.chEnabled = false
+                mCh2!!.chEnabled = false
+                if (mCh1!!.characteristicDataPacketBytes != null &&
+                        mCh2!!.characteristicDataPacketBytes != null) {
+                    mPrimarySaveDataFile!!.writeToDisk(mCh1?.characteristicDataPacketBytes,
+                            mCh2?.characteristicDataPacketBytes)
+                }
+            }
+        } else {
+            // 2 devices
+            if (mCh1!!.chEnabled && mCh2!!.chEnabled && mCh3!!.chEnabled && mCh4!!.chEnabled) {
+                mNumberPackets++
+                mEEGConnectedAllChannels = true
+                mCh1!!.chEnabled = false
+                mCh2!!.chEnabled = false
+                mCh3!!.chEnabled = false
+                mCh4!!.chEnabled = false
+                if (mCh1!!.characteristicDataPacketBytes != null && mCh2!!.characteristicDataPacketBytes != null
+                        && mCh3!!.characteristicDataPacketBytes != null && mCh4!!.characteristicDataPacketBytes != null) {
+                    mPrimarySaveDataFile!!.writeToDisk(mCh1?.characteristicDataPacketBytes, mCh2?.characteristicDataPacketBytes,
+                            mCh3?.characteristicDataPacketBytes, mCh4?.characteristicDataPacketBytes)
+                }
             }
         }
     }
