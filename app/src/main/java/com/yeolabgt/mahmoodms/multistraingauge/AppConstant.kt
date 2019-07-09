@@ -11,6 +11,12 @@ import java.util.UUID
 class AppConstant {
     companion object {
         /**
+         * For strain gauge:
+         */
+        internal val SERVICE_STRAIN_GAUGE = UUID.fromString("228ba730-35fd-875f-39fe-b2a394d28057")
+        // Char:
+        internal val CHAR_STRAIN_GAUGE = UUID.fromString("0000a731-0000-1000-8000-00805f9b34fb")
+        /**
          * For EEG:
          */
         internal val SERVICE_EEG_SIGNAL = UUID.fromString("228beef0-35fd-875f-39fe-b2a394d28057")
@@ -19,11 +25,6 @@ class AppConstant {
         internal val CHAR_EEG_CH2_SIGNAL = UUID.fromString("0000eef2-0000-1000-8000-00805f9b34fb")
         internal val CHAR_EEG_CH3_SIGNAL = UUID.fromString("0000eef3-0000-1000-8000-00805f9b34fb")
         internal val CHAR_EEG_CH4_SIGNAL = UUID.fromString("0000eef4-0000-1000-8000-00805f9b34fb")
-        internal val CHAR_EEG_CH5_SIGNAL = UUID.fromString("0000eef5-0000-1000-8000-00805f9b34fb")
-        internal val CHAR_EEG_CH6_SIGNAL = UUID.fromString("0000eef6-0000-1000-8000-00805f9b34fb")
-        internal val CHAR_EEG_CH7_SIGNAL = UUID.fromString("0000eef7-0000-1000-8000-00805f9b34fb")
-        internal val CHAR_EEG_CH8_SIGNAL = UUID.fromString("0000eef8-0000-1000-8000-00805f9b34fb")
-        internal val CHAR_EEG_CONFIG = UUID.fromString("0000eeff-0000-1000-8000-00805f9b34fb")
 
         /** TO READ THE BLE DEVICE'S INFORMATION  */
 

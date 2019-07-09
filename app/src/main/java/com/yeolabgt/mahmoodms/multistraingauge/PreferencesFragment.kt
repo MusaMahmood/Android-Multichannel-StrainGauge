@@ -19,10 +19,15 @@ class PreferencesFragment : PreferenceFragment() {
 
     companion object {
         //Key Association:
+        private var SETTINGS_CH_SELECT = "switch_ch"
         private var SETTINGS_SAVE_TIMESTAMPS = "timestamps"
         private var SETTINGS_SAVE_CLASS = "save_class"
         private var SETTINGS_BIT_PRECISION = "bit_precision"
         private var SETTINGS_FILTER_DATA = "filterData"
+
+        fun channelSelect(context: Context): Boolean {
+            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_CH_SELECT, true)
+        }
 
         fun saveTimestamps(context: Context): Boolean {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_SAVE_TIMESTAMPS, false)
@@ -32,28 +37,12 @@ class PreferencesFragment : PreferenceFragment() {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_SAVE_CLASS, true)
         }
 
-        fun setFilterData(context: Context): Boolean {
-            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_FILTER_DATA, false)
-        }
-
         fun setBitPrecision(context: Context): Boolean {
             return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_BIT_PRECISION, true)
         }
 
-        fun setNumberChannelsEnabled(context: Context): Int {
-            return PreferenceManager.getDefaultSharedPreferences(context).getString("channel_list_preference", "4").toInt()
-        }
-
-        fun setSampleRate(context: Context): Int {
-            return PreferenceManager.getDefaultSharedPreferences(context).getString("sample_rate_list_preference", "1").toInt()
-        }
-
-        fun setGainCh12(context: Context) : Int {
-            return PreferenceManager.getDefaultSharedPreferences(context).getString("gain_list_preference", "1").toInt()
-        }
-
-        fun setSRB1(context: Context): Boolean {
-            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("switch_srb1", false)
+        fun setFilterData(context: Context): Boolean {
+            return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(SETTINGS_FILTER_DATA, false)
         }
     }
 }

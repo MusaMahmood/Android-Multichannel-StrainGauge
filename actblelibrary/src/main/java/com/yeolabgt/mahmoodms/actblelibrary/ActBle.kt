@@ -21,8 +21,7 @@ import java.util.concurrent.Executors
  */
 
 class ActBle(private val mContext: Context, private val mBluetoothManager: BluetoothManager?,
-             private val mActBleListener: ActBleListener)
-{
+             private val mActBleListener: ActBleListener) {
     private val bluetoothGattHashMap = HashMap<String, BluetoothGatt>()
 
     /**
@@ -39,13 +38,13 @@ class ActBle(private val mContext: Context, private val mBluetoothManager: Bluet
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            Log.d(TAG, "onCharacteristicRead: "+characteristic.uuid.toString())
+            Log.d(TAG, "onCharacteristicRead: " + characteristic.uuid.toString())
             removeProcess(characteristic, ActBleProcessQueue.REQUEST_TYPE_READ_CHAR)
             mActBleListener.onCharacteristicRead(gatt, characteristic, status)
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt, characteristic: BluetoothGattCharacteristic, status: Int) {
-            Log.d(TAG, "onCharacteristicWrite: "+characteristic.uuid.toString())
+            Log.d(TAG, "onCharacteristicWrite: " + characteristic.uuid.toString())
             removeProcess(characteristic, ActBleProcessQueue.REQUEST_TYPE_WRITE_CHAR)
             mActBleListener.onCharacteristicWrite(gatt, characteristic, status)
         }
@@ -55,14 +54,14 @@ class ActBle(private val mContext: Context, private val mBluetoothManager: Bluet
         }
 
         override fun onDescriptorRead(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            Log.d(TAG,"onDescriptorRead: "+descriptor.characteristic.uuid.toString())
+            Log.d(TAG, "onDescriptorRead: " + descriptor.characteristic.uuid.toString())
             removeProcess(descriptor.characteristic, ActBleProcessQueue.REQUEST_TYPE_READ_DESCRIPTOR)
             mActBleListener.onDescriptorRead(gatt, descriptor, status)
         }
 
 
         override fun onDescriptorWrite(gatt: BluetoothGatt, descriptor: BluetoothGattDescriptor, status: Int) {
-            Log.d(TAG, "onDescriptorWrite: "+descriptor.characteristic.uuid.toString())
+            Log.d(TAG, "onDescriptorWrite: " + descriptor.characteristic.uuid.toString())
             removeProcess(descriptor.characteristic, ActBleProcessQueue.REQUEST_TYPE_WRITE_DESCRIPTOR)
             mActBleListener.onDescriptorWrite(gatt, descriptor, status)
         }
@@ -78,8 +77,8 @@ class ActBle(private val mContext: Context, private val mBluetoothManager: Bluet
      *
      */
     fun removeProcess(characteristic: BluetoothGattCharacteristic, requestCode: Int) {
-        if(ActBleProcessQueue.actBleCharacteristicListSize != 0) {
-            Log.d(TAG, "removeProcess: (Characteristic), requestCode: "+requestCode)
+        if (ActBleProcessQueue.actBleCharacteristicListSize != 0) {
+            Log.d(TAG, "removeProcess: (Characteristic), requestCode: " + requestCode)
             var remove = false
             var position = 0
             for (i in ActBleProcessQueue.getActBleCharacteristicList().indices) {
@@ -93,7 +92,7 @@ class ActBle(private val mContext: Context, private val mBluetoothManager: Bluet
                     }
                 }
             }
-            if(remove) {
+            if (remove) {
                 ActBleProcessQueue.removeCharacteristicRequest(position)
                 runProcess() //Run next process:
             }

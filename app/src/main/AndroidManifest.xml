@@ -38,7 +38,7 @@
         </activity>
         <activity android:name="com.yeolabgt.mahmoodms.multistraingauge.DeviceControlActivity"
             android:hardwareAccelerated="false"
-            android:label="ECG Sensor Data"
+            android:label="PPG Demo"
             android:parentActivityName="com.yeolabgt.mahmoodms.multistraingauge.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

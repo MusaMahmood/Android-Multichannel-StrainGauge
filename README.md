@@ -1,1 +1,1 @@
-# Android-EMG-MultiDemo
+# Android-PPG-Demo

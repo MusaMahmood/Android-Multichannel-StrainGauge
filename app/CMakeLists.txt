@@ -20,22 +20,15 @@ add_library( # Sets the name of the library.
              src/main/cpp/native-lib.cpp )
 
 add_library( # Sets the name of the library.
-              ssvep-lib
+              ecg-lib
 
               # Sets the library as a shared library.
               SHARED
               # Provides a relative path to your source file(s).
 
                 # Main C++ Data Processing Files
-                src/main/cpp/prep_eog.cpp
-                src/main/cpp/analyze_outputs_eog.cpp
-
                 # Executor
-                src/main/cpp/jniExecutor.cpp
-
-                src/main/cpp/rt_nonfinite.cpp
-                src/main/cpp/rtGetInf.cpp
-                src/main/cpp/rtGetNaN.cpp )
+                src/main/cpp/jniExecutor.cpp)
 
 # The following line allows for auto-including header files in the listed directory:
 include_directories(src/main/cpp/)
@@ -59,7 +52,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        # ### NOTE YOU HAVE TO INDIVIDUALLY LINK EACH LIBRARY!
-                       ssvep-lib
+                       ecg-lib
 
                        # Links the target library to the log library
                        # included in the NDK.
@@ -71,9 +64,3 @@ target_link_libraries( # Specifies the target library.
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )
-
-target_compile_options(ssvep-lib PRIVATE
-    "$<$<CONFIG:RELEASE>:-O3>"
-    "$<$<CONFIG:DEBUG>:-O3>"
-)
-
