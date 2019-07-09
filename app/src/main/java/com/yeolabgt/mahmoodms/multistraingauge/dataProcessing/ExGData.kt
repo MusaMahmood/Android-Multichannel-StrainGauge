@@ -5,12 +5,12 @@ import java.util.*
 
 internal class ExGData(bufferSize: Int, addressMac: String, uuid: UUID, fileTimestamp: String, samplingRate: Int = 250, saveData: Boolean = true, channelNumber: Int = 1) :
         BaseDataCollector(addressMac, uuid) {
-    var dataBuffer: DataBuffer = DataBuffer(bufferSize, true, samplingRate, 2000, "EMG Ch$channelNumber", Color.BLUE)
+    var dataBuffer: DataBuffer = DataBuffer(bufferSize, true, samplingRate, 2000, "SG Ch$channelNumber", Color.BLUE)
     var dataSaver: DataSaver? = null
 
     init {
         if (saveData) {
-            dataSaver = DataSaver("/EMGData", "EMGData", addressMac, fileTimestamp, samplingRate)
+            dataSaver = DataSaver("/StrainGauge", "StrainGaugeData", addressMac, fileTimestamp, samplingRate)
         }
     }
 
