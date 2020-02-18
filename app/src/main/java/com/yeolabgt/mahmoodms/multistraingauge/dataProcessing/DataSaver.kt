@@ -7,7 +7,7 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 
-internal class DataSaver(directoryName: String, dataType: String, addressMac: String, fileTimestamp: String, samplingRate: Int, splitFilesAfter: Int = 0) {
+internal class DataSaver(directoryName: String, dataType: String, addressMac: String, fileTimestamp: String, samplingRate: Int, splitFilesAfter: Int = 0, channelNumber: Int = 1) {
     var fileName: String
     var file: File? = null
     private var csvWriter: CSVWriter? = null
@@ -22,7 +22,7 @@ internal class DataSaver(directoryName: String, dataType: String, addressMac: St
         fileName = if (splitFiles) {
             "${dataType}_${addressMac.replace(":", "")}_${fileTimestamp}_${samplingRate}_" + "$fileNumber".padStart(3)
         } else {
-            "${dataType}_${addressMac.replace(":", "")}_${fileTimestamp}_$samplingRate"
+            "${dataType}_${addressMac.replace(":", "")}_${fileTimestamp}_${samplingRate}_$channelNumber"
         }
         createNewFile(directoryName, fileName)
     }
@@ -41,6 +41,7 @@ internal class DataSaver(directoryName: String, dataType: String, addressMac: St
                 this.csvWriter = CSVWriter(fileWriter)
             } else {
                 this.csvWriter = CSVWriter(FileWriter(this.file))
+                Log.d(TAG, "Creating new file: $directory$fileName")
             }
         }
         this.initialized = true

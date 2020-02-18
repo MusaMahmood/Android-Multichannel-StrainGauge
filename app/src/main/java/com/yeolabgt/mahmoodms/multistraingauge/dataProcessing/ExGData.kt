@@ -10,7 +10,7 @@ internal class ExGData(bufferSize: Int, addressMac: String, uuid: UUID, fileTime
 
     init {
         if (saveData) {
-            dataSaver = DataSaver("/StrainGauge", "StrainGaugeData", addressMac, fileTimestamp, samplingRate)
+            dataSaver = DataSaver("/StrainGauge", "StrainGaugeData", addressMac, fileTimestamp, samplingRate, channelNumber = channelNumber)
         }
     }
 
@@ -31,7 +31,7 @@ internal class ExGData(bufferSize: Int, addressMac: String, uuid: UUID, fileTime
     }
 
     companion object {
-        fun bytesToDouble24bit(a1: Byte, a2: Byte, a3: Byte, gain: Double = 12.0, msbFirst: Boolean = true): Double {
+        fun bytesToDouble24bit(a1: Byte, a2: Byte, a3: Byte, gain: Double = 1.0, msbFirst: Boolean = true): Double {
             val unsigned = unsignedBytesToInt(a1, a2, a3, msbFirst)
             val signed = unsignedToSigned24bit(unsigned).toDouble()
             return signed / 8388607.0 / gain * 2.42

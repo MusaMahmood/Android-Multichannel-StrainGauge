@@ -399,9 +399,9 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                 if (AppConstant.SERVICE_EEG_SIGNAL == service.uuid) {
                     if (service.getCharacteristic(AppConstant.CHAR_EEG_CH1_SIGNAL) != null) {
                         mActBle!!.setCharacteristicNotifications(gatt, service.getCharacteristic(AppConstant.CHAR_EEG_CH1_SIGNAL), true)
-                        mExGCh1ArrayList.add(ExGData(0, gatt.device.address, AppConstant.CHAR_EEG_CH1_SIGNAL, mTimeStamp, samplingRate = 125))
+                        mExGCh1ArrayList.add(ExGData(0, gatt.device.address, AppConstant.CHAR_EEG_CH1_SIGNAL, mTimeStamp, samplingRate = 125, channelNumber = 1))
                         // TODO: Change this to check if device+ch exists in a single arraylist (containing all channels)
-                        for (i in 0 until deviceMacAddresses!!.size) {
+                        for (i in deviceMacAddresses!!.indices) {
                             if (deviceMacAddresses!![i] == gatt.device.address) {
                                 addGraphToPlot(mExGCh1ArrayList[mExGCh1ArrayList.lastIndex].dataBuffer, mExGCh1PlotArray[i]!!)
                                 break
@@ -410,8 +410,8 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
                     }
                     if (service.getCharacteristic(AppConstant.CHAR_EEG_CH2_SIGNAL) != null) {
                         mActBle!!.setCharacteristicNotifications(gatt, service.getCharacteristic(AppConstant.CHAR_EEG_CH2_SIGNAL), true)
-                        mExGCh2ArrayList.add(ExGData(0, gatt.device.address, AppConstant.CHAR_EEG_CH2_SIGNAL, mTimeStamp, samplingRate = 125))
-                        for (i in 0 until deviceMacAddresses!!.size) {
+                        mExGCh2ArrayList.add(ExGData(0, gatt.device.address, AppConstant.CHAR_EEG_CH2_SIGNAL, mTimeStamp, samplingRate = 125, channelNumber = 2))
+                        for (i in deviceMacAddresses!!.indices) {
                             if (deviceMacAddresses!![i] == gatt.device.address) {
                                 addGraphToPlot(mExGCh2ArrayList[mExGCh2ArrayList.lastIndex].dataBuffer, mExGCh2PlotArray[i]!!)
                                 break
@@ -662,7 +662,7 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
     }
 
     private fun updateBatteryStatus(voltage: Double, address: String) {
-        val status: String
+        val status: String = address
         val finalVoltage = voltage * 2.0 + 0.5 // Double voltage due to voltage divider in circuit
         val finalPercent: Double = when {
             finalVoltage >= 4.0 -> 100.0
@@ -670,7 +670,6 @@ class DeviceControlActivity : Activity(), ActBle.ActBleListener {
             else -> 1.0 // <3.6V
         }
         Log.e(TAG, "Device $address, BattVoltage: " + String.format(Locale.US, "%.3f", finalVoltage) + "V : " + String.format(Locale.US, "%.3f", finalPercent) + "%")
-        status = address/* + " (" + String.format(Locale.US, "%.1f", finalPercent) + "%)"*/
         for (i in 0 until deviceMacAddresses?.size!!) {
             if (address == deviceMacAddresses!![i]) {
                 runOnUiThread {
